@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <!-- HERO SECTION AVEC VOTRE IMAGE -->
+    <div class="hero-home">
+        <div class="hero-content">
+            <h1 class="hero-title">GlowLuxe</h1>
+            <p class="hero-tagline">Brillez dans l'élégance</p>
+            <p class="hero-description">
+                Découvrez notre collection exclusive de vêtements et accessoires de luxe
+            </p>
+            <a href="{% url 'product_list' %}" class="btn hero-btn">
+                Découvrir la Collection
+            </a>
+        </div>
+    </div>
+
+    <h2 class="section-title">Produits Phares</h2>
+
+    <!-- CARROUSEL QUI DÉFILE SANS PAUSE -->
+    <div class="carousel-wrapper">
+        <div class="carousel-track">
+            <!-- Première passe - TOUS les produits ont le bouton favoris -->
+            {% for product in featured_products %}
+            <div class="carousel-item">
+                <div class="product-card">
+                    <div class="product-image">
+                        <!-- BOUTON FAVORIS (CŒUR) SUR TOUS LES PRODUITS -->
+                        <button class="favorite-btn" 
+                                data-product-id="{{ product.id }}"
+                                data-product-name="{{ product.name }}"
+                                data-product-price="{{ product.current_price }}"
+                                data-product-image="{% if product.images.first %}{{ product.images.first.image.url }}{% endif %}"
+                                data-product-url="{% url 'product_detail' category_slug=product.category.slug product_slug=product.slug %}">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <span style="font-size: 3rem;">🛍️</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3>{{ product.name }}</h3>
+                        <p class="product-price">{{ product.current_price }} FCFA</p>
+                        <a href="{% url 'product_detail' category_slug=product.category.slug product_slug=product.slug %}" class="btn">
+                            Voir Détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Deuxième passe pour défilement infini (AUSSI avec favoris) -->
+            {% for product in featured_products %}
+            <div class="carousel-item">
+                <div class="product-card">
+                    <div class="product-image">
+                        <!-- BOUTON FAVORIS AUSSI SUR LA DEUXIÈME PASSE -->
+                        <button class="favorite-btn" 
+                                data-product-id="{{ product.id }}"
+                                data-product-name="{{ product.name }}"
+                                data-product-price="{{ product.current_price }}"
+                                data-product-image="{% if product.images.first %}{{ product.images.first.image.url }}{% endif %}"
+                                data-product-url="{% url 'product_detail' category_slug=product.category.slug product_slug=product.slug %}">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <span style="font-size: 3rem;">🛍️</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3>{{ product.name }}</h3>
+                        <p class="product-price">{{ product.current_price }} FCFA</p>
+                        <a href="{% url 'product_detail' category_slug=product.category.slug product_slug=product.slug %}" class="btn">
+                            Voir Détails
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hero Section */
+    .hero-home {
+        position: relative;
+        height: 500px;
+        background: linear-gradient(rgba(255, 255, 255, 0.21), rgba(45, 45, 45, 0.7)), 
+                    url('{% static 'images/hero-bg.jpg' %}') center/cover;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+    }
+
+    .hero-content {
+        padding: 2rem;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        color: var(--gold-glow);
+    }
+
+    .hero-tagline {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-btn {
+        background: var(--cta-gold);
+        color: var(--primary-dark);
+        font-size: 1.1rem;
+        padding: 1rem 2rem;
+    }
+
+    /* Section Title */
+    .section-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--primary-dark);
+    }
+
+    /* RESPONSIVE STYLES */
+    @media (max-width: 768px) {
+        .hero-home {
+            height: 400px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-tagline {
+            font-size: 1.2rem;
+        }
+
+        .hero-description {
+            font-size: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-home {
+            height: 350px;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-tagline {
+            font-size: 1rem;
+        }
+
+        .hero-description {
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* ===== CARROUSEL À DÉFILEMENT INFINI CORRIGÉ ===== */
+    .carousel-wrapper {
+        width: 100%;
+        overflow: hidden;
+        margin: 2rem 0;
+        padding: 10px 0;
+    }
+
+    .carousel-track {
+        display: flex;
+        gap: 20px;
+        width: fit-content;
+        animation: scroll var(--scroll-duration, 30s) linear infinite;
+    }
+
+    /* Animation corrigée pour défilement infini */
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            /* Déplace de la largeur totale de la première série de produits */
+            transform: translateX(calc(-300px * {{ featured_products|length }} - 20px * {{ featured_products|length }}));
+        }
+    }
+
+    /* Style des items du carrousel */
+    .carousel-item {
+        flex: 0 0 280px;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background: var(--bg-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-info {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-info h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        flex: 1;
+    }
+
+    .product-price {
+        color: var(--cta-gold);
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin: 0.5rem 0;
+    }
+
+    .product-card .btn {
+        width: 100%;
+        text-align: center;
+        margin-top: auto;
+        background: var(--cta-gold);
+        color: var(--primary-dark);
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .product-card .btn:hover {
+        background: var(--gold-glow);
+        transform: translateY(-2px);
+    }
+
+    /* ===== BOUTON FAVORIS ===== */
+    .favorite-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+        z-index: 10;
+        color: #ff4d4d;
+        font-size: 1.2rem;
+    }
+
+    .favorite-btn:hover {
+        transform: scale(1.1);
+        background: #ff4d4d;
+        color: white;
+    }
+
+    .favorite-btn.active {
+        background: #ff4d4d;
+        color: white;
+    }
+
+    .favorite-btn.active i {
+        color: white;
+    }
+
+    /* Responsive carrousel */
+    @media (max-width: 768px) {
+        .carousel-item {
+            flex: 0 0 220px;
+        }
+        
+        .product-image {
+            height: 200px;
+        }
+        
+        .favorite-btn {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .carousel-item {
+            flex: 0 0 180px;
+        }
+        
+        .product-image {
+            height: 160px;
+        }
+    }
+</style>
+
+<script>
+// ===== GESTION DES FAVORIS =====
+function getFavorites() {
+    return JSON.parse(localStorage.getItem('favorites')) || [];
+}
+
+function saveFavorites(favorites) {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+function isFavorite(productId) {
+    const favorites = getFavorites();
+    return favorites.some(fav => fav.id == productId);
+}
+
+function updateFavoriteButton(btn, productId) {
+    if (isFavorite(productId)) {
+        btn.classList.add('active');
+        btn.querySelector('i').classList.remove('far');
+        btn.querySelector('i').classList.add('fas');
+    } else {
+        btn.classList.remove('active');
+        btn.querySelector('i').classList.remove('fas');
+        btn.querySelector('i').classList.add('far');
+    }
+}
+
+function toggleFavorite(btn, productData) {
+    let favorites = getFavorites();
+    const productId = productData.id;
+    
+    if (isFavorite(productId)) {
+        favorites = favorites.filter(fav => fav.id != productId);
+    } else {
+        favorites.push(productData);
+    }
+    
+    saveFavorites(favorites);
+    updateFavoriteButton(btn, productId);
+}
+
+// Initialisation au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    const favoriteBtns = document.querySelectorAll('.favorite-btn');
+    
+    favoriteBtns.forEach(btn => {
+        const productId = btn.getAttribute('data-product-id');
+        
+        updateFavoriteButton(btn, productId);
+        
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productData = {
+                id: this.getAttribute('data-product-id'),
+                name: this.getAttribute('data-product-name'),
+                price: this.getAttribute('data-product-price'),
+                image: this.getAttribute('data-product-image'),
+                url: this.getAttribute('data-product-url')
+            };
+            
+            toggleFavorite(this, productData);
+        });
+    });
+    
+    // Ajuster la durée de l'animation selon le nombre de produits
+    const track = document.querySelector('.carousel-track');
+    if (track) {
+        const productCount = {{ featured_products|length }};
+        // Plus il y a de produits, plus l'animation est lente pour rester lisible
+        const duration = Math.max(20, productCount * 5);
+        track.style.setProperty('--scroll-duration', duration + 's');
+    }
+});
+</script>
+{% endblock %}

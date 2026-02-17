@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .order-detail-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .order-header {
+        margin-bottom: 2rem;
+    }
+    
+    .order-title {
+        font-size: 2rem;
+        color: var(--primary-dark);
+        font-family: var(--font-secondary);
+        font-weight: 700;
+    }
+    
+    .back-link {
+        color: var(--text-medium);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+    
+    .back-link:hover {
+        color: var(--cta-gold);
+        transform: translateX(-3px);
+    }
+    
+    .order-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+    
+    .order-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+        font-family: var(--font-secondary);
+        font-weight: 600;
+    }
+    
+    /* Articles - Images GRANDES et bien visibles */
+    .order-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+        padding: 2rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .item-image {
+        width: 250px;
+        height: 300px;
+        background: transparent;
+        border-radius: 8px;
+        display: block;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        transition: all 0.3s ease;
+    }
+    
+    .item-image:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+    }
+    
+    .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    
+    .item-image-placeholder {
+        font-size: 4rem;
+        opacity: 0.3;
+    }
+    
+    .item-details {
+        flex: 1;
+        padding-top: 0.5rem;
+    }
+    
+    .item-name {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 0 0 0.8rem 0;
+        color: var(--primary-dark);
+        line-height: 1.3;
+    }
+    
+    .item-meta {
+        color: var(--text-medium);
+        font-size: 0.95rem;
+        margin: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .item-meta strong {
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+    
+    .item-quantity {
+        display: inline-flex;
+        align-items: center;
+        background: var(--bg-light);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    .item-price-section {
+        text-align: right;
+        padding-top: 0.5rem;
+        flex-shrink: 0;
+    }
+    
+    .item-unit-price {
+        color: var(--text-medium);
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .item-price {
+        font-weight: bold;
+        font-size: 1.3rem;
+        color: var(--cta-gold);
+    }
+    
+    /* Résumé */
+    .summary-box {
+        background: var(--bg-light);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+        font-size: 1rem;
+    }
+    
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        font-size: 1.3rem;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        border-top: 2px solid #ccc;
+        color: var(--primary-dark);
+    }
+    
+    .summary-total .amount {
+        color: var(--cta-gold);
+    }
+    
+    /* Statut */
+    .status-box {
+        background: linear-gradient(135deg, var(--cta-gold) 0%, var(--cta-hover) 100%);
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+    }
+    
+    .status-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--primary-dark);
+    }
+    
+    .status-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-dark);
+        font-family: var(--font-secondary);
+    }
+    
+    /* RESPONSIVE TABLET */
+    @media (max-width: 1024px) {
+        .order-content {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .item-image {
+            width: 100px;
+            height: 100px;
+        }
+    }
+    
+    /* RESPONSIVE MOBILE */
+    @media (max-width: 768px) {
+        .order-detail-wrapper {
+            padding: 1rem 0.5rem;
+        }
+        
+        .order-title {
+            font-size: 1.5rem;
+        }
+        
+        .order-section {
+            padding: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+        }
+        
+        .order-item {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--bg-light);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-bottom: none;
+        }
+        
+        .item-image {
+            width: 100%;
+            max-width: 250px;
+            height: 280px;
+            margin: 0 auto;
+        }
+        
+        .item-details {
+            width: 100%;
+            padding-top: 0;
+        }
+        
+        .item-name {
+            font-size: 1.1rem;
+        }
+        
+        .item-meta {
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .item-quantity {
+            display: inline-flex;
+        }
+        
+        .item-price-section {
+            width: 100%;
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px dashed #ccc;
+        }
+        
+        .item-price {
+            font-size: 1.4rem;
+        }
+        
+        .summary-row {
+            font-size: 0.95rem;
+        }
+        
+        .summary-total {
+            font-size: 1.2rem;
+        }
+        
+        .status-value {
+            font-size: 1.3rem;
+        }
+    }
+    
+    /* Très petits écrans */
+    @media (max-width: 480px) {
+        .order-detail-wrapper {
+            padding: 1rem 0.5rem;
+        }
+        
+        .order-section {
+            padding: 1rem;
+        }
+        
+        .order-item {
+            padding: 1rem;
+        }
+        
+        .item-image {
+            width: 100%;
+            max-width: 200px;
+            height: 240px;
+            margin: 0 auto;
+        }
+        
+        .item-name {
+            font-size: 1rem;
+        }
+        
+        .item-meta {
+            font-size: 0.85rem;
+        }
+        
+        .item-price {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+<div class="order-detail-wrapper">
+    <div class="order-header">
+        <a href="{% url 'order_list' %}" class="back-link">
+            ← Retour à mes commandes
+        </a>
+        <h1 class="order-title">Commande #{{ order.order_number }}</h1>
+    </div>
+    
+    <div class="order-content">
+        <!-- Articles commandés -->
+        <div class="order-section">
+            <h2 class="section-title">Articles commandés</h2>
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <div class="item-image">
+                    {% if item.product.images.first %}
+                        <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                        <span class="item-image-placeholder">🛍️</span>
+                    {% endif %}
+                </div>
+                <div class="item-details">
+                    <h4 class="item-name">{{ item.product_name }}</h4>
+                    <p class="item-meta">
+                        <strong>Taille:</strong> {{ item.size }}
+                    </p>
+                    <p class="item-meta">
+                        <strong>Couleur:</strong> {{ item.color }}
+                    </p>
+                    <span class="item-quantity">
+                        📦 Quantité: {{ item.quantity }}
+                    </span>
+                </div>
+                <div class="item-price-section">
+                    <div class="item-unit-price">{{ item.price }} FCFA × {{ item.quantity }}</div>
+                    <div class="item-price">{{ item.total_price }} FCFA</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Résumé et Statut -->
+        <div>
+            <div class="order-section">
+                <h2 class="section-title">Résumé</h2>
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>Sous-total:</span>
+                        <span>{{ order.subtotal }} FCFA</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Livraison:</span>
+                        <span>{{ order.shipping_cost }} FCFA</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Taxes:</span>
+                        <span>{{ order.tax }} FCFA</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total:</span>
+                        <span class="amount">{{ order.total }} FCFA</span>
+                    </div>
+                </div>
+                
+                <div class="status-box">
+                    <div class="status-label">Statut de la commande</div>
+                    <div class="status-value">{{ order.get_status_display }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

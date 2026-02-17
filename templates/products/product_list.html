@@ -1,0 +1,501 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Header avec titre et bouton favoris -->
+    <div class="header-section">
+        <h1 class="page-title">{% if category %}{{ category.name }}{% else %}Tous les Produits{% endif %}</h1>
+        <a href="{% url 'favoris' %}" class="btn-favoris">
+            <span class="heart-icon">❤️</span>
+            <span class="favoris-text">Mes Favoris</span>
+            <span id="favorites-count" class="favorites-badge">0</span>
+        </a>
+    </div>
+
+    <!-- Navigation horizontale avec séparateurs ">" -->
+    <nav class="breadcrumb-nav">
+        <ul class="breadcrumb-list">
+            <li>
+                <a href="{% url 'product_list' %}" 
+                   class="breadcrumb-link {% if not category %}active{% endif %}">
+                    Tous les produits
+                </a>
+            </li>
+            {% for cat in categories %}
+                <li class="breadcrumb-separator">></li>
+                <li>
+                    <a href="{% url 'product_list_by_category' cat.slug %}" 
+                       class="breadcrumb-link {% if category and category.slug == cat.slug %}active{% endif %}">
+                        {{ cat.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    
+    <div class="content-wrapper">
+        <!-- Grille de produits -->
+        <div class="products-section">
+            <div class="products-grid">
+                {% for product in products %}
+                <div class="product-card">
+                    <div class="product-image">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <span class="placeholder-icon">🛍️</span>
+                        {% endif %}
+                        <!-- Bouton favoris -->
+                        <button class="favorite-btn" 
+                                data-product-id="{{ product.id }}"
+                                data-product-name="{{ product.name }}"
+                                data-product-price="{{ product.current_price }}"
+                                data-product-image="{% if product.images.first %}{{ product.images.first.image.url }}{% else %}{% endif %}"
+                                data-product-url="{% url 'product_detail' category_slug=product.category.slug product_slug=product.slug %}">
+                            ♡
+                        </button>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <p class="product-price">{{ product.current_price }} FCFA</p>
+                        <a href="{% url 'product_detail' category_slug=product.category.slug product_slug=product.slug %}" class="btn-details">
+                            Voir Détails
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="no-products">Aucun produit trouvé.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+:root {
+    --cta-gold: #d4af37;
+    --primary-dark: #2D2D2D;
+    --text-dark: #333;
+    --bg-light: #f5f5f5;
+}
+
+.container {
+    padding: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    margin: 0;
+    flex: 1;
+}
+
+.btn-favoris {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 2px solid var(--cta-gold);
+    color: var(--cta-gold);
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.btn-favoris:hover {
+    background: var(--cta-gold);
+    color: var(--primary-dark);
+}
+
+.favorites-badge {
+    background: var(--cta-gold);
+    color: var(--primary-dark);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb-nav {
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.breadcrumb-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.breadcrumb-separator {
+    color: #6c757d;
+    margin: 0 0.3rem;
+}
+
+.breadcrumb-link {
+    color: var(--text-dark);
+    text-decoration: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.breadcrumb-link.active {
+    font-weight: bold;
+    color: var(--cta-gold);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.products-section {
+    flex: 1;
+}
+
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+/* Product Card */
+.product-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.product-image {
+    height: 200px;
+    background: var(--bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+}
+
+/* Favorite Button */
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.favorite-btn:hover {
+    transform: scale(1.1);
+    background: white;
+}
+
+/* Product Info */
+.product-info {
+    padding: 1rem;
+}
+
+.product-name {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.product-price {
+    font-weight: bold;
+    color: var(--cta-gold);
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+}
+
+.btn-details {
+    display: inline-block;
+    background: var(--cta-gold);
+    color: var(--primary-dark);
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-align: center;
+    width: 100%;
+}
+
+.btn-details:hover {
+    background: #c4a137;
+    transform: translateY(-2px);
+}
+
+.no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* RESPONSIVE - TABLET */
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* RESPONSIVE - MOBILE */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
+    
+    /* Header Section Mobile */
+    .header-section {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 1rem;
+    }
+    
+    .page-title {
+        font-size: 1.3rem;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-favoris {
+        justify-content: center;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .heart-icon {
+        font-size: 1.2rem;
+    }
+    
+    /* Breadcrumb Mobile */
+    .breadcrumb-nav {
+        margin-bottom: 1rem;
+    }
+    
+    .breadcrumb-list {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+    
+    .breadcrumb-link {
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+    
+    /* Products Grid Mobile - 1 colonne */
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .product-card {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .product-image {
+        height: 250px;
+    }
+    
+    .product-name {
+        font-size: 1rem;
+    }
+    
+    .product-price {
+        font-size: 1.1rem;
+    }
+}
+
+/* RESPONSIVE - PETIT MOBILE */
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.1rem;
+    }
+    
+    .btn-favoris {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .favoris-text {
+        display: none;
+    }
+    
+    .favorites-badge {
+        width: 20px;
+        height: 20px;
+        font-size: 0.75rem;
+    }
+    
+    .breadcrumb-link {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.4rem;
+    }
+    
+    .product-image {
+        height: 200px;
+    }
+    
+    .product-info {
+        padding: 0.8rem;
+    }
+    
+    .favorite-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour obtenir les favoris du localStorage
+    function getFavorites() {
+        return JSON.parse(localStorage.getItem('favorites')) || [];
+    }
+
+    // Fonction pour sauvegarder les favoris dans le localStorage
+    function saveFavorites(favorites) {
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
+
+    // Fonction pour mettre à jour le compteur de favoris
+    function updateFavoritesCount() {
+        const favorites = getFavorites();
+        const countElement = document.getElementById('favorites-count');
+        if (countElement) {
+            countElement.textContent = favorites.length;
+        }
+    }
+
+    // Fonction pour mettre à jour l'affichage des boutons favoris
+    function updateFavoriteButtons() {
+        const favorites = getFavorites();
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            const productId = btn.getAttribute('data-product-id');
+            if (favorites.some(fav => fav.id == productId)) {
+                btn.innerHTML = '♥';
+                btn.style.color = '#dc3545';
+            } else {
+                btn.innerHTML = '♡';
+                btn.style.color = '';
+            }
+        });
+    }
+
+    // Gérer le clic sur les boutons favoris
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productId = this.getAttribute('data-product-id');
+            const productName = this.getAttribute('data-product-name');
+            const productPrice = this.getAttribute('data-product-price');
+            const productImage = this.getAttribute('data-product-image');
+            const productUrl = this.getAttribute('data-product-url');
+
+            let favorites = getFavorites();
+            const existingIndex = favorites.findIndex(fav => fav.id == productId);
+
+            if (existingIndex !== -1) {
+                // Retirer des favoris
+                favorites.splice(existingIndex, 1);
+                // Animation de retrait
+                this.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            } else {
+                // Ajouter aux favoris
+                favorites.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    image: productImage,
+                    url: productUrl
+                });
+                // Animation d'ajout
+                this.style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            }
+
+            saveFavorites(favorites);
+            updateFavoriteButtons();
+            updateFavoritesCount();
+        });
+    });
+
+    // Initialiser l'affichage
+    updateFavoriteButtons();
+    updateFavoritesCount();
+});
+</script>
+{% endblock %}

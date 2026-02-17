@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Mon Profil</h1>
+    
+    <div style="background: white; padding: 2rem; border-radius: 10px; margin-top: 2rem;">
+        <h2>Informations personnelles</h2>
+        <p><strong>Nom d'utilisateur:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Date d'inscription:</strong> {{ user.date_joined|date:"d/m/Y" }}</p>
+        
+        <div style="margin-top: 2rem;">
+            <a href="{% url 'order_list' %}" class="btn">Mes Commandes</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

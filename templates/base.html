@@ -1,0 +1,885 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GlowLuxe - Brillez dans l'élégance{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #2D2D2D;
+            --gold-glow: #FFD700;
+            --warm-bronze: #8B7355;
+            --bg-light: #FAFAFA;
+            --bg-white: #FFFFFF;
+            --cta-gold: #E6B800;
+            --cta-hover: #FFE135;
+            --text-dark: #2D2D2D;
+            --text-medium: #5A5A5A;
+            --text-light: #8A8A8A;
+            --font-primary: 'Georgia', 'Times New Roman', serif;
+            --font-secondary: 'Montserrat', sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding-top: 80px;
+        }
+        
+        /* NAVBAR STICKY */
+        .navbar {
+            background: var(--primary-dark);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            color: var(--gold-glow);
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+            font-family: var(--font-secondary);
+            font-weight: 700;
+            z-index: 1001;
+        }
+        
+        /* MENU HAMBURGER */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            z-index: 1001;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+        }
+        
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background-color: var(--gold-glow);
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            font-family: var(--font-secondary);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link:hover {
+            background: var(--cta-gold);
+            color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 184, 0, 0.3);
+        }
+        
+        .nav-link.active {
+            background: var(--gold-glow);
+            color: var(--primary-dark);
+        }
+        
+        /* BOUTON PANIER */
+        .cart-btn {
+            background: var(--cta-gold);
+            color: var(--primary-dark);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-secondary);
+            position: relative;
+        }
+        
+        .cart-btn:hover {
+            background: var(--cta-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(230, 184, 0, 0.4);
+        }
+        
+        .cart-count {
+            background: var(--primary-dark);
+            color: var(--gold-glow);
+            border-radius: 50%;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            border: 2px solid var(--primary-dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            font-family: var(--font-secondary);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-price {
+            color: var(--cta-gold);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+            font-family: var(--font-secondary);
+        }
+        
+        .btn {
+            background: var(--cta-gold);
+            color: var(--primary-dark);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-family: var(--font-secondary);
+        }
+        
+        .btn:hover {
+            background: var(--cta-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 184, 0, 0.3);
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #1a1a1a 100%);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+            font-family: var(--font-secondary);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+        
+        .footer-section h3 {
+            color: var(--gold-glow);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section p {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .about-section {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .contact-info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .contact-info-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: var(--bg-light);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-info-card:hover {
+            transform: translateX(10px);
+            background: var(--cta-gold);
+        }
+        
+        .info-icon {
+            font-size: 1.5rem;
+            background: var(--primary-dark);
+            color: var(--gold-glow);
+            padding: 0.8rem;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .info-title {
+            color: var(--primary-dark);
+            margin-bottom: 2rem;
+            font-family: var(--font-secondary);
+            font-size: 2rem;
+        }
+        
+        .info-subtitle {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-secondary);
+        }
+        
+        /* ===== MENU DROPDOWN MOBILE (Petite Fenêtre) ===== */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            /* Menu dropdown compact avec icônes */
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: 1rem;
+                width: 280px;
+                max-height: 0;
+                background: var(--primary-dark);
+                flex-direction: column;
+                gap: 0;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                transition: max-height 0.4s ease, opacity 0.3s ease;
+                opacity: 0;
+                padding: 0;
+            }
+            
+            .nav-links.active {
+                max-height: 500px;
+                opacity: 1;
+                padding: 1rem 0;
+            }
+            
+            .nav-link {
+                width: 100%;
+                text-align: left;
+                padding: 0.9rem 1.5rem;
+                border-radius: 0;
+                margin: 0;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            
+            .nav-link:last-of-type {
+                border-bottom: none;
+            }
+            
+            .nav-link::before {
+                font-size: 1.3rem;
+            }
+            
+            /* Ajout des icônes via pseudo-éléments */
+            .nav-link:nth-child(1)::before { content: "🏠"; }
+            .nav-link:nth-child(2)::before { content: "🛍️"; }
+            .nav-link:nth-child(3)::before { content: "ℹ️"; }
+            .nav-link:nth-child(4)::before { content: "👤"; }
+            .nav-link:nth-child(5)::before { content: "🚪"; }
+            
+            /* Pour les liens de connexion/inscription (cas non authentifié) */
+            .nav-links a[href*="login"]::before { content: "🔑"; }
+            .nav-links a[href*="register"]::before { content: "📝"; }
+            
+            .cart-btn {
+                width: calc(100% - 2rem);
+                margin: 0.5rem 1rem;
+                justify-content: center;
+                padding: 1rem;
+                font-size: 1rem;
+                border-radius: 10px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+            
+            .about-section,
+            .contact-info-section {
+                padding: 1.5rem;
+            }
+            
+            .info-title {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Tablettes */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-link {
+                padding: 0.6rem 1rem;
+                font-size: 0.95rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ===== STYLES POUR MOBILE ===== */
+.mobile-actions {
+    display: none;  /* Caché sur desktop */
+    align-items: center;
+    gap: 1rem;
+    margin-right: 0.5rem;
+}
+
+.mobile-search-btn, .mobile-cart {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.3rem;
+    position: relative;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.mobile-cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--gold-glow);
+    color: var(--primary-dark);
+    border-radius: 50%;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+    .mobile-actions {
+        display: flex;  /* Visible sur mobile */
+    }
+    
+    .hamburger {
+        order: 3;  /* Met le hamburger à la fin */
+    }
+    
+    .mobile-actions {
+        order: 2;  /* Les icônes avant le hamburger */
+    }
+    
+    .nav-container {
+        display: flex;
+        align-items: center;
+    }
+    
+    .logo {
+        order: 1;  /* Logo premier */
+        flex: 1;   /* Prend l'espace disponible */
+    }
+    
+    /* Cacher les anciens boutons du menu mobile */
+    .nav-links .cart-btn {
+        display: none;
+    }
+    
+    /* Animation pour la recherche mobile */
+    .mobile-search-form {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        display: none;
+        z-index: 999;
+    }
+    
+    .mobile-search-form.active {
+        display: block;
+        animation: slideDown 0.3s ease;
+    }
+    
+    .mobile-search-form input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid var(--gold-glow);
+        border-radius: 25px;
+        font-size: 1rem;
+        outline: none;
+    }
+}
+
+/* Animation */
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+/* ===== STYLES POUR NAVBAR COMPLÈTE ===== */
+
+/* Cache les éléments mobile sur desktop */
+@media (min-width: 769px) {
+    .mobile-actions {
+        display: none !important;
+    }
+    
+    .hamburger {
+        display: none !important;
+    }
+}
+
+/* Cache les éléments desktop sur mobile */
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none !important;
+    }
+    
+    .nav-links {
+        display: none; /* Caché par défaut sur mobile, apparaît au clic */
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .desktop-cart {
+        display: none !important; /* Cache le panier desktop sur mobile */
+    }
+    
+    .mobile-actions {
+        display: flex !important;
+    }
+}
+
+/* Style pour le panier desktop */
+.desktop-cart {
+    color: white;
+    font-size: 1.2rem;
+    position: relative;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    margin-left: 0.5rem;
+}
+
+.desktop-cart:hover {
+    color: var(--gold-glow);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    background: var(--gold-glow);
+    color: var(--primary-dark);
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* Barre de recherche dans navbar */
+.nav-search {
+    flex: 1;
+    max-width: 350px;
+    margin: 0 1.5rem;
+}
+
+.nav-search-form {
+    display: flex;
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 2px solid var(--gold-glow);
+    transition: all 0.3s ease;
+}
+
+.nav-search-input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.nav-search-btn {
+    background: var(--cta-gold);
+    border: none;
+    padding: 0 1rem;
+    cursor: pointer;
+    color: var(--primary-dark);
+}
+
+.nav-search-btn:hover {
+    background: var(--gold-glow);
+}
+
+/* Logo */
+.logo-img {
+    height: 50px;
+    width: auto;
+}
+
+/* Navigation links desktop */
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.nav-link:hover {
+    background: var(--cta-gold);
+    color: var(--primary-dark);
+}
+
+/* Responsive pour écrans moyens */
+@media (max-width: 1100px) {
+    .nav-search {
+        max-width: 250px;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .nav-search {
+        max-width: 200px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- NAVBAR FIXE AVEC HAMBURGER -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo" style="height: 100%; display: flex; align-items: center;">
+    <img src="{% static 'images/logo-glow-luxe.png' %}" 
+         alt="GlowLuxe" 
+         style="height: 90px; width: auto; max-height: 90px; object-fit: contain;">
+</a>
+              <!-- BARRE DE RECHERCHE DANS LA NAVBAR (DESKTOP ONLY) -->
+    <div class="nav-search desktop-only">
+        <form method="GET" action="{% url 'product_list' %}" class="nav-search-form">
+            <input type="text" 
+                   name="q" 
+                   placeholder="Rechercher un produit..."
+                   value="{{ request.GET.q }}"
+                   class="nav-search-input">
+            <button type="submit" class="nav-search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+
+           <!-- ACTIONS MOBILES (recherche + panier) -->
+<div class="mobile-actions">
+    <button class="mobile-search-btn" id="mobileSearchToggle">
+        <i class="fas fa-search"></i>
+    </button>
+    
+    <a href="{% url 'cart_detail' %}" class="mobile-cart">
+        <i class="fas fa-cart-shopping"></i>
+        {% if cart_items_count > 0 %}
+            <span class="mobile-cart-count">{{ cart_items_count }}</span>
+        {% endif %}
+    </a>
+</div>
+
+<!-- BOUTON HAMBURGER -->
+<button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<!-- MENU NAVIGATION (reste inchangé) -->
+<div class="nav-links" id="navLinks">
+    <a href="{% url 'home' %}" class="nav-link">Accueil</a>
+    <a href="{% url 'product_list' %}" class="nav-link">Boutique</a>
+    <a href="/a-propos/" class="nav-link">À Propos</a>
+    {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="nav-link">Mon Compte</a>
+        <a href="{% url 'logout' %}" class="nav-link">Déconnexion</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="nav-link">Connexion</a>
+        <a href="{% url 'register' %}" class="nav-link">Inscription</a>
+    {% endif %}
+    <!-- PANIER DESKTOP (toujours visible) -->
+        <a href="{% url 'cart_detail' %}" class="cart-icon-nav desktop-cart">
+            <i class="fas fa-shopping-cart"></i>
+            {% if cart_items_count > 0 %}
+                <span class="cart-badge">{{ cart_items_count }}</span>
+            {% endif %}
+        </a>
+</div>
+    </nav>
+
+<!-- Formulaire de recherche mobile (caché par défaut) -->
+<div class="mobile-search-form" id="mobileSearchForm">
+    <form method="GET" action="{% url 'product_list' %}">
+        <input type="text" 
+               name="q" 
+               placeholder="Rechercher un produit..."
+               value="{{ request.GET.q }}">
+    </form>
+</div>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>GlowLuxe</h3>
+                <p>Brillez dans l'élégance avec notre collection exclusive de vêtements et accessoires de luxe.</p>
+                <p>Votre destination shopping premium au Sénégal.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📍 Tivaouane, Quartier Seydi Diamil SY</p>
+                <p>📞 +221 77 822 84 60</p>
+                <p>📧 contact@glowluxe.com</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Horaires</h3>
+                <p>Lun - Ven: 9h00 - 18h00</p>
+                <p>Samedi: 10h00 - 17h00</p>
+                <p>Dimanche: Fermé</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Liens Rapides</h3>
+                <p><a href="{% url 'home' %}" style="color: white; text-decoration: none;">Accueil</a></p>
+                <p><a href="{% url 'product_list' %}" style="color: white; text-decoration: none;">Boutique</a></p>
+                <p><a href="/a-propos/" style="color: white; text-decoration: none;">À Propos</a></p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 GlowLuxe by SO & FA. Tous droits réservés. Brillez dans l'élégance.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT POUR LE MENU HAMBURGER -->
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        
+        // Toggle menu au clic sur hamburger
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+        
+        // Fermer le menu au clic sur un lien
+        const allNavLinks = document.querySelectorAll('.nav-link, .cart-btn');
+        allNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+        
+        // Fermer le menu si on clique en dehors
+        document.addEventListener('click', function(event) {
+            const isClickInsideNav = navLinks.contains(event.target);
+            const isClickOnHamburger = hamburger.contains(event.target);
+            
+            if (!isClickInsideNav && !isClickOnHamburger && navLinks.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Dans votre script, ajoutez :
+const mobileSearchBtn = document.getElementById('mobileSearchToggle');
+const mobileSearchForm = document.getElementById('mobileSearchForm');
+
+if (mobileSearchBtn) {
+    mobileSearchBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        mobileSearchForm.classList.toggle('active');
+        if (mobileSearchForm.classList.contains('active')) {
+            mobileSearchForm.querySelector('input').focus();
+        }
+    });
+}
+
+// Fermer la recherche si on clique ailleurs
+document.addEventListener('click', function(event) {
+    if (mobileSearchForm && mobileSearchForm.classList.contains('active')) {
+        const isClickInside = mobileSearchForm.contains(event.target) || 
+                             mobileSearchBtn.contains(event.target);
+        if (!isClickInside) {
+            mobileSearchForm.classList.remove('active');
+        }
+    }
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Mes Commandes</h1>
+    
+    {% if orders %}
+    <div style="background: white; padding: 2rem; border-radius: 10px; margin-top: 2rem;">
+        {% for order in orders %}
+        <div style="border: 1px solid #eee; border-radius: 5px; padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0;">Commande #{{ order.order_number }}</h3>
+                    <p style="margin: 0.5rem 0; color: var(--text-medium);">
+                        Date: {{ order.created_at|date:"d/m/Y" }} | 
+                        Statut: <strong>{{ order.get_status_display }}</strong>
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 1.2rem; font-weight: bold; color: var(--cta-gold); margin: 0;">
+                        {{ order.total }} FCFA
+                    </p>
+                    <a href="{% url 'order_detail' order.id %}" class="btn" style="margin-top: 0.5rem;">
+                        Voir Détails
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 4rem 2rem;">
+        <h2 style="color: var(--text-light); margin-bottom: 1rem;">Aucune commande</h2>
+        <p style="color: var(--text-medium); margin-bottom: 2rem;">Vous n'avez pas encore passé de commande.</p>
+        <a href="{% url 'product_list' %}" class="btn">
+            Découvrir la Boutique
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
