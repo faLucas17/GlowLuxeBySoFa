@@ -18,7 +18,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-8fh%rn*@*6)65*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.7', '.alwaysdata.net', 'glowluxe.alwaysdata.net']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.7', '.alwaysdata.net', 'glowluxe.alwaysdata.net',
+    '.onrender.com','glowluxebysofa.onrender.com',]
 
 # Application definition
 INSTALLED_APPS = [
