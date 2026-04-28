@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: glowluxe
+    runtime: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn glowluxe.wsgi:application
+    envVars:
+      - key: DJANGO_DEBUG
+        value: False
+      - key: PYTHON_VERSION
+        value: 3.11.7
