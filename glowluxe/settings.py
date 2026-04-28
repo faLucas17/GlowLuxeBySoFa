@@ -5,6 +5,9 @@ Django settings for glowluxe project.
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -19,7 +22,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-8fh%rn*@*6)65*
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.7', '.alwaysdata.net', 'glowluxe.alwaysdata.net',
-    '.onrender.com','glowluxebysofa.onrender.com',]
+    '.onrender.com','glowluxebysofa.onrender.com', 'cloudinary_storage','cloudinary',]
 
 # Application definition
 INSTALLED_APPS = [
@@ -120,3 +123,10 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    
+    CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dt6kk2ihd',
+    'API_KEY': '618474118257336',
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),   
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
